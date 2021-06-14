@@ -1,0 +1,5 @@
+sfmutils
+*.json
+*.exe
+*.log
+tmp

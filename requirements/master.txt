@@ -1,0 +1,9 @@
+git+https://github.com/gwu-libraries/warcprox.git@master#egg=warcprox
+git+https://github.com/sebastian-nagel/sfm-utils.git@eo2#egg=sfmutils
+# git+https://github.com/gwu-libraries/sfm-utils.git@master#egg=sfmutils
+
+insta-scrape
+selenium
+lxml
+beautifulsoup4==4.8.2
+twarc==1.7.3
