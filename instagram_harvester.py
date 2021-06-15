@@ -92,6 +92,8 @@ class InstagramHarvester(BaseHarvester):
 
         cookies.click()
 
+        time.sleep(random.uniform(3,9))
+
         username_ins = driver.find_element_by_name('username')
         password_ins = driver.find_element_by_name('password')
         submit = driver.find_element_by_css_selector("button[type='submit']")
@@ -177,7 +179,8 @@ class InstagramHarvester(BaseHarvester):
 
         posts = []
         # this gets the post ids so that they later can be scraped AND checks whether the post was scraped beforehand
-        for post in insta_profile.get_posts(webdriver = driver, amount = 5, scrape_pause = 8, max_failed_scroll = 400):
+        # amount = 5 or something else can be used to limit post number
+        for post in insta_profile.get_posts(webdriver = driver, scrape_pause = 8, max_failed_scroll = 400):
 
             if incremental and post["source"] == since_id and post["source"]:
                 log.info("Stopping, found last post that was previously harvested with id: %s", post["source"])
