@@ -74,9 +74,8 @@ class InstagramHarvester(BaseHarvester):
 
         # this will connect to the selenium container starting scraping
         # Note: host name of the running container is "selenium"
-        driver = webdriver.Remote("http://selenium:4444/wd/hub", {'browserName': 'chrome'})
+        driver = webdriver.Remote("http://selenium:4444/wd/hub", {'browserName': 'chrome'}, options=chrome_options)
         return driver
-
     def insta_login(self, driver):
         """Logs into instagram and returns the respective webdriver session via selenium.
         Closing has to happen elsewhere!"""
