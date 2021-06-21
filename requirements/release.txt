@@ -6,4 +6,7 @@ git+https://github.com/gwu-libraries/warcprox.git@2.4b4-gwu#egg=warcprox
 selenium==3.141.0
 
 beautifulsoup4==4.8.2
-twarc==1.7.3
+
+lxml
+
+insta-scrape
