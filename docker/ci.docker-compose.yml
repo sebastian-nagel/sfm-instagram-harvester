@@ -1,33 +1,41 @@
 version: "2"
 services:
-  rabbit:
-      image: rabbitmq@sha256:397382d2b222f3a298a6c74e93f348fb16f9a7fde2c02ba14122624d852daae3
-      environment:
-          - TZ=America/New_York
-          - RABBITMQ_DEFAULT_USER=sfm_user
-          - RABBITMQ_DEFAULT_PASS=password
-  data:
-      image: gwul/sfm-data:master
-      volumes:
-           - /sfm-data
-      environment:
-          - TZ=America/New_York
-          - SFM_UID=900
-          - SFM_GID=900
-  facebookrestharvester:
-      image: gwul/sfm-twitter-rest-harvester:master
-      links:
-          - rabbit:mq
-      volumes:
-          - "..:/opt/sfm-facebook-harvester"
-      volumes_from:
-          - data
-      environment:
-          - TZ=America/New_York
-          - DEBUG=true
-          - RABBITMQ_USER=sfm_user
-          - RABBITMQ_PASSWORD=password
-          - SFM_REQS=master
-          - HARVEST_TRIES=3
-          - SFM_UID=900
-          - SFM_GID=900
+    rabbit:
+        image: rabbitmq@sha256:397382d2b222f3a298a6c74e93f348fb16f9a7fde2c02ba14122624d852daae3
+        environment:
+            - TZ=America/New_York
+            - RABBITMQ_DEFAULT_USER=sfm_user
+            - RABBITMQ_DEFAULT_PASS=password
+    data:
+        image: gwul/sfm-data:master
+            volumes:
+                - /sfm-data
+            environment:
+                - TZ=America/New_York
+                - SFM_UID
+                - SFM_GID
+    instagramharvester:
+        build:
+            context: https://github.com/fgremler/sfm-instagram-harvester.git
+        links:
+            - mq:mq
+            - selenium_ins:selenium
+        volumes_from:
+            - data
+        environment:
+            - TZ
+            - DEBUG=true
+            - RABBITMQ_USER
+            - RABBITMQ_PASSWORD
+            - SFM_REQS=master
+            - SFM_UID
+            - SFM_GID
+            - HARVEST_TRIES=${INSTAGRAM_HARVEST_TRIES}
+        logging:
+            driver: json-file
+            options:
+                max-size: ${DOCKER_LOG_MAX_SIZE}
+                max-file: ${DOCKER_LOG_MAX_FILE}
+    selenium_ins:
+        image: selenium/standalone-chrome:87.0
+        restart: always

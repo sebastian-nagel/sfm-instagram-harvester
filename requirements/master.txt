@@ -6,4 +6,3 @@ insta-scrape
 selenium
 lxml
 beautifulsoup4==4.8.2
-twarc==1.7.3
