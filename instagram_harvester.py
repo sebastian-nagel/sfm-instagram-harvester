@@ -76,6 +76,7 @@ class InstagramHarvester(BaseHarvester):
         # Note: host name of the running container is "selenium"
         driver = webdriver.Remote("http://selenium:4444/wd/hub", {'browserName': 'chrome'}, options=chrome_options)
         return driver
+
     def insta_login(self, driver):
         """Logs into instagram and returns the respective webdriver session via selenium.
         Closing has to happen elsewhere!"""
@@ -149,6 +150,8 @@ class InstagramHarvester(BaseHarvester):
             driver = self.initiate_selenium_webdriver()
         self.insta_login(driver = driver)
 
+        log.info("Page title after login: %s", driver.title)
+
         # retrieve the session id (apparently needed for profile.scrape...)
         SESSIONID = driver.session_id
 
@@ -208,12 +211,9 @@ class InstagramHarvester(BaseHarvester):
             self.result.harvest_counter["posts"] += 1
             self.result.increment_stats("posts")
 
-            # media will be captured by warcproxy file
+            # media is captured by warcprox
             if harvest_media and post['display_url']:
-                print(post['display_url'])
-                requests.get("http://www.example.com")
-                requests.get(post.display_url)
-
+                self._harvest_media_url(post['display_url'])
                 time.sleep(random.uniform(3,9))
 
         # indexing needed since 'unscraped' psts are written to second
@@ -259,6 +259,17 @@ class InstagramHarvester(BaseHarvester):
                                                 warc_content_type = "application/json")
             writer.write_record(record)
             log.info("Writing scraped results to %s", self.warc_temp_dir)
+
+    def _harvest_media_url(self, url):
+        log.debug("Harvesting media URL %s", url)
+        try:
+            r = requests.get(url)
+            log.info("Harvested media URL %s (status: %i, content-type: %s)",
+                     url, r.status_code, r.headers['content-type'])
+        except Exception:
+            log.exception("Failed to harvest media URL %s with exception:", url)
+
+
 
 if __name__ == "__main__":
     InstagramHarvester.main(InstagramHarvester, QUEUE, [TIMELINE_ROUTING_KEY, PROFILE_ROUTING_KEY])

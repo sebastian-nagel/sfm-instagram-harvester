@@ -4,10 +4,14 @@ MAINTAINER Frederik Gremler <frederik.gremler@uni-konstanz.de>
 
 RUN apt-get install jq -yq
 
-ADD . /opt/sfm-instagram-harvester/
-WORKDIR /opt/sfm-instagram-harvester
+ENV WORKDIR=/opt/sfm-instagram-harvester
+COPY requirements $WORKDIR/requirements
+RUN pip install \
+                -r $WORKDIR/requirements/common.txt \
+                -r $WORKDIR/requirements/release.txt
 
-RUN pip install -r requirements/common.txt -r requirements/release.txt
+COPY *.py $WORKDIR/
+WORKDIR $WORKDIR
 
 ADD docker/invoke.sh /opt/sfm-setup/
 RUN chmod +x /opt/sfm-setup/invoke.sh
