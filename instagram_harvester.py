@@ -168,7 +168,7 @@ class InstagramHarvester(BaseHarvester):
 
         insta_profile = Profile(username)
         # insta_profile.scrape(headers = headers)
-        insta_profile.scrape(webdriver = driver)
+        insta_profile.scrape(webdriver=driver)
 
         # now scrape posts url
         # also setting a pause between requests to avoid blocking
@@ -182,7 +182,7 @@ class InstagramHarvester(BaseHarvester):
         posts = []
         # this gets the post ids so that they later can be scraped AND checks whether the post was scraped beforehand
         # amount = 5 or something else can be used to limit post number
-        for post in insta_profile.get_posts(webdriver = driver, scrape_pause = 8, max_failed_scroll = 400):
+        for post in insta_profile.get_posts(webdriver = driver, scrape_pause = 5, max_failed_scroll = 400):
 
             if incremental and post["source"] == since_id and post["source"]:
                 log.info("Stopping, found last post that was previously harvested with id: %s", post["source"])
@@ -201,7 +201,7 @@ class InstagramHarvester(BaseHarvester):
         # all_posts = [post.to_dict() for post in scraped_posts]
         # print(all_posts)
 
-        all_posts = scrape_posts(posts, webdriver = driver, pause = 10, silent = False)
+        all_posts = scrape_posts(posts, webdriver = driver, pause = 5, silent = False)
         # print(all_posts)
         # scrape_posts()[1] would be failed scraped posts
         all_posts = all_posts[0]
