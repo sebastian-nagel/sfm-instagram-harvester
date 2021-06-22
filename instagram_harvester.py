@@ -202,10 +202,14 @@ class InstagramHarvester(BaseHarvester):
         # print(all_posts)
 
         all_posts = scrape_posts(posts, webdriver = driver, pause = 10, silent = False)
-        print(all_posts)
+        # print(all_posts)
         # scrape_posts()[1] would be failed scraped posts
         all_posts = all_posts[0]
-        print(all_posts)
+        # print(all_posts)
+
+        # make sure the driver always quits otherways it will keep open
+        # and cause problems the next time around (https://www.youtube.com/watch?v=O_I6TJAKvH8)
+        driver.quit()
 
         for post in all_posts:
             self.result.harvest_counter["posts"] += 1
@@ -216,14 +220,8 @@ class InstagramHarvester(BaseHarvester):
                 self._harvest_media_url(post['display_url'])
                 time.sleep(random.uniform(3,9))
 
-        # indexing needed since 'unscraped' psts are written to second
-        # list by insta scraper
         all_posts = [post.to_dict() for post in all_posts]
 
-
-        # make sure the driver always quits otherways it will keep open
-        # and cause problems the next time around (https://www.youtube.com/watch?v=O_I6TJAKvH8)
-        driver.quit()
         # finally set state for incremental harvests
         if incremental:
             key = "timeline.{}.since_id".format(username)
