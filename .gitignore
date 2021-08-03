@@ -3,3 +3,4 @@ sfmutils
 *.exe
 *.log
 tmp
+get_cookies.py

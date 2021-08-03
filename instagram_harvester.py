@@ -143,18 +143,46 @@ class InstagramHarvester(BaseHarvester):
         incremental = self.message.get("options", {}).get("incremental", False)
         harvest_media = self.message.get("options", {}).get("harvest_media", False)
 
+        # if no cookies exist, get them
+        if not os.path.exists("cookies.json"):
+            driver = self.initiate_selenium_webdriver()
+            self.insta_login(driver = driver)
+
+            cookies = driver.get_cookies()
+
+            with open("cookies.json", "w") as f:
+                json.dump(cookies, f)
+
+
         # prepare selenium session and login
         if self.local:
             driver = self.initiate_selenium_webdriver_local()
         else:
             driver = self.initiate_selenium_webdriver()
-        self.insta_login(driver = driver)
 
-        log.info("Page title after login: %s", driver.title)
+        # after this cookies should be present but check anyways
+        # check whether cookies are present, otherwise try to
+        # log in
+        if os.path.isfile("cookies.json"):
+            # first navigate to fb, otherwise
+            # selenium does not accept the cookies
+            # navigate to page
+            driver.get("https://www.instagram.com/")
+
+            #  load cookies
+            with open("cookies.json") as f:
+                cookies = json.load(f)
+
+            # add to driver
+            for cookie in cookies: driver.add_cookie(cookie)
+
+        # if no cookies, try to login
+        else:
+            self.fb_login(driver = driver)
+            time.sleep(random.uniform(3,9))
 
         # retrieve the session id (apparently needed for profile.scrape...)
         SESSIONID = driver.session_id
-
 
         headers = {'User-Agent': "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Mobile Safari/537.36 Edg/87.0.664.57",
                    "cookie": f"sessionid={SESSIONID}"}
