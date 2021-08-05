@@ -4,3 +4,4 @@ sfmutils
 *.log
 tmp
 get_cookies.py
+test_insta.py

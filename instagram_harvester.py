@@ -253,9 +253,9 @@ class InstagramHarvester(BaseHarvester):
         # finally set state for incremental harvests
         if incremental:
             key = "timeline.{}.since_id".format(username)
-            max_post_id = posts[0]["source"] # first post should be most recent one
+            max_post_id = all_posts[0]["shortcode"] # first post should be most recent one
             self.state_store.set_state(__name__, key, max_post_id)
-            log.info("Wrote first scraped post to state_store: %s (state: %s)", max_post_id, key)
+            log.info("Wrote first, most recent scraped post to state_store: %s (state: %s)", max_post_id, key)
         # rationale for state:
         # todo
 
