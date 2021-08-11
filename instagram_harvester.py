@@ -144,13 +144,13 @@ class InstagramHarvester(BaseHarvester):
         harvest_media = self.message.get("options", {}).get("harvest_media", False)
 
         # if no cookies exist, get them
-        if not os.path.exists("cookies.json"):
+        if not os.path.exists("/tmp/cookies.json"):
             driver = self.initiate_selenium_webdriver()
             self.insta_login(driver = driver)
 
             cookies = driver.get_cookies()
 
-            with open("cookies.json", "w") as f:
+            with open("/tmp/cookies.json", "w") as f:
                 json.dump(cookies, f)
 
 
@@ -163,14 +163,14 @@ class InstagramHarvester(BaseHarvester):
         # after this cookies should be present but check anyways
         # check whether cookies are present, otherwise try to
         # log in
-        if os.path.isfile("cookies.json"):
+        if os.path.isfile("/tmp/cookies.json"):
             # first navigate to fb, otherwise
             # selenium does not accept the cookies
             # navigate to page
             driver.get("https://www.instagram.com/")
 
             #  load cookies
-            with open("cookies.json") as f:
+            with open("/tmp/cookies.json") as f:
                 cookies = json.load(f)
 
             # add to driver
