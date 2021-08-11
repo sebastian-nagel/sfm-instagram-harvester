@@ -217,9 +217,9 @@ class InstagramHarvester(BaseHarvester):
 
             # for very long harvests, try to avoid blocking by sleeping after a
             # certain amount of posts
-            if self.result.harvest_counter["posts"] in [100, 200, 400, 800, 1600, 2400]:
-                log.info("Waiting approx. 15 to avoid block bc of too many requests")
-                time.sleep(random.uniform(850, 950))
+            if self.result.harvest_counter["posts"] in [150, 400, 800, 1600, 2400]:
+                log.info("Waiting a few minutes to avoid block bc of too many requests")
+                time.sleep(random.uniform(50, 450))
 
             if incremental and post["source"] == since_id and post["source"]:
                 log.info("Stopping, found last post that was previously harvested with id: %s", post["source"])
