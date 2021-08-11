@@ -212,6 +212,15 @@ class InstagramHarvester(BaseHarvester):
         # amount = 5 or something else can be used to limit post number
         for post in insta_profile.get_posts(webdriver = driver, scrape_pause = 5, max_failed_scroll = 400):
 
+            self.result.harvest_counter["posts"] += 1
+            self.result.increment_stats("posts")
+
+            # for very long harvests, try to avoid blocking by sleeping after a
+            # certain amount of posts
+            if self.result.harvest_counter["posts"] in [100, 200, 400, 800, 1600, 2400]:
+                log.info("Waiting approx. 15 to avoid block bc of too many requests")
+                time.sleep(random.uniform(850, 950))
+
             if incremental and post["source"] == since_id and post["source"]:
                 log.info("Stopping, found last post that was previously harvested with id: %s", post["source"])
                 break
@@ -240,8 +249,6 @@ class InstagramHarvester(BaseHarvester):
         driver.quit()
 
         for post in all_posts:
-            self.result.harvest_counter["posts"] += 1
-            self.result.increment_stats("posts")
 
             # media is captured by warcprox
             if harvest_media and post['display_url']:
