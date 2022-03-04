@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 
-from instascrape import Profile, scrape_posts
 import instagram_scraper
 
 import logging
-import re
 import json
-from bs4 import BeautifulSoup
 from warcio.warcwriter import WARCWriter
 import requests
 import os
@@ -16,14 +13,6 @@ import warcprox
 import random
 import time
 import pickle
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.support import expected_conditions as ec
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-
 
 from sfmutils.harvester import BaseHarvester, Msg, CODE_TOKEN_NOT_FOUND, CODE_UID_NOT_FOUND, CODE_UNKNOWN_ERROR
 from sfmutils.warcprox import warced

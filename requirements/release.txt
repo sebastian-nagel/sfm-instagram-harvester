@@ -9,4 +9,5 @@ beautifulsoup4==4.8.2
 
 lxml
 
-instagram_scraper
+# instagram_scraper
+git+https://github.com/fgremler/instagram-scraper@masters#egg=instagram-scraper
