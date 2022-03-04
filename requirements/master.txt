@@ -1,7 +1,7 @@
 git+https://github.com/gwu-libraries/warcprox.git@master#egg=warcprox
 git+https://github.com/sebastian-nagel/sfm-utils.git@eo2#egg=sfmutils
 # git+https://github.com/gwu-libraries/sfm-utils.git@master#egg=sfmutils
-git+https://github.com/fgremler/instagram-scraper@masters#egg=instagram-scraper
+git+https://github.com/fgremler/instagram-scraper@master#egg=instagram-scraper
 # instagram_scraper
 selenium
 lxml
