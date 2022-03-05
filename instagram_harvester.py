@@ -84,23 +84,23 @@ class InstagramHarvester(BaseHarvester):
             since_id = self.state_store.get_state(__name__, u"timeline.{}.since_id".format(username))
 
         # create cookiejar if not exits
-        if not os.path.exists("cookie_jar_instascrape"):
+        if not os.path.exists("/tmp/cookie_jar_instascrape"):
             user_email = self.message['credentials']['user_email_ins']
             user_password = self.message['credentials']['user_password_ins']
-            login = {"login_user": user_email, "login_pass": user_password}
-            insta_scraper = instagram_scraper.InstagramScraper(**login)
+            args = {"login_user": user_email, "login_pass": user_password, "logger": False}
+            insta_scraper = instagram_scraper.InstagramScraper(**args)
             insta_scraper.authenticate_with_login()
 
             # save cookies
             if insta_scraper.session.cookies:
-                with open("cookie_jar_instascrape", "wb") as f:
+                with open("/tmp/cookie_jar_instascrape", "wb") as f:
                     pickle.dump(insta_scraper.session.cookies, f)
             else:
                 log.error("Could not find cookies after logging in. Stopping.")
                 return
 
         # start scraping by instantiating sesseion class
-        insta_scraper = instagram_scraper.InstagramScraper(cookiejar="cookie_jar_instascrape")
+        insta_scraper = instagram_scraper.InstagramScraper(cookiejar="/tmp/cookie_jar_instascrape", log_destination = "/tmp/")
         # get info
         shared_info = insta_scraper.get_shared_data_userinfo(username)
 
@@ -124,12 +124,12 @@ class InstagramHarvester(BaseHarvester):
                 break
 
             if incremental and post.get("id") == since_id:
-                log.info("Stopping, found last post that was previously harvested with id: %s", post["source"])
+                log.info("Stopping, found last post that was previously harvested with id: %s", post["id"])
                 break
             # just append the whole dict
             posts.append(post)
             # add random sleep to avoid blocks
-            time.sleep(0.2, 2)
+            time.sleep(random.uniform(0.3, 2.5))
 
 
             # media is captured by warcprox
@@ -138,7 +138,7 @@ class InstagramHarvester(BaseHarvester):
                 time.sleep(random.uniform(2,5))
 
         # finally set state for incremental harvests
-        if incremental:
+        if incremental and len(posts)>0:
             key = "timeline.{}.since_id".format(username)
             max_post_id = posts[0]["id"] # first post should be most recent one
             self.state_store.set_state(__name__, key, max_post_id)
@@ -160,7 +160,7 @@ class InstagramHarvester(BaseHarvester):
                     return o.__str__()
 
             # todo json conversion implemented in package so...
-            json_payload = json.dumps(all_posts, default = json_date_converter,
+            json_payload = json.dumps(posts, default = json_date_converter,
                                       ensure_ascii = False).encode("utf-8")
 
 
@@ -181,8 +181,6 @@ class InstagramHarvester(BaseHarvester):
                      url, r.status_code, r.headers['content-type'])
         except Exception:
             log.exception("Failed to harvest media URL %s with exception:", url)
-
-
 
 if __name__ == "__main__":
     InstagramHarvester.main(InstagramHarvester, QUEUE, [TIMELINE_ROUTING_KEY, PROFILE_ROUTING_KEY])
